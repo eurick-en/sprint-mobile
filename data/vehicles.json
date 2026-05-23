@@ -1,0 +1,53 @@
+[
+  {
+    "id": "1",
+    "brand": "Ford",
+    "model": "Ranger",
+    "version": "Raptor",
+    "price": 490000,
+    "engine": "3.0 V6 Biturbo",
+    "power": "397cv",
+    "traction": "4x4",
+    "consumption": "8 km/l",
+    "transmission": "Automático 10 marchas",
+    "fuel": "Gasolina",
+    "torque": "59,5 kgfm",
+    "steering": "Elétrica",
+    "tank": "80L",
+    "image": "ranger"
+  },
+  {
+    "id": "2",
+    "brand": "Toyota",
+    "model": "Hilux",
+    "version": "GR-Sport",
+    "price": 380000,
+    "engine": "2.8 Turbo Diesel",
+    "power": "224cv",
+    "traction": "4x4",
+    "consumption": "10 km/l",
+    "transmission": "Automático 6 marchas",
+    "fuel": "Diesel",
+    "torque": "55 kgfm",
+    "steering": "Hidráulica",
+    "tank": "80L",
+    "image": "hilux"
+  },
+  {
+    "id": "3",
+    "brand": "RAM",
+    "model": "Rampage",
+    "version": "Laramie",
+    "price": 270000,
+    "engine": "2.0 Turbo",
+    "power": "272cv",
+    "traction": "4x4",
+    "consumption": "9 km/l",
+    "transmission": "Automático 9 marchas",
+    "fuel": "Gasolina",
+    "torque": "40,8 kgfm",
+    "steering": "Elétrica",
+    "tank": "60L",
+    "image": "rampage"
+  }
+]
