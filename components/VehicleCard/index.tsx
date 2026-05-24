@@ -4,7 +4,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  Modal,
   ActivityIndicator,
 } from "react-native";
 
@@ -40,9 +39,6 @@ export function VehicleCard({
   const [loading, setLoading] =
     useState(false);
 
-  const [modalVisible, setModalVisible] =
-    useState(false);
-
   const {
     favoriteVehicles,
     toggleFavorite,
@@ -60,176 +56,141 @@ export function VehicleCard({
       onPress();
 
       setLoading(false);
-
-      setModalVisible(true);
-
-      setTimeout(() => {
-        setModalVisible(false);
-      }, 1800);
-    }, 1000);
+    }, 700);
   }
 
   return (
-    <>
-      {/* MODAL */}
-      <Modal
-        transparent
-        visible={modalVisible}
-        animationType="fade"
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalBox}>
-            <Ionicons
-              name="checkmark-circle"
-              size={64}
-              color="#22C55E"
-            />
+    <TouchableOpacity
+      style={[
+        styles.card,
 
-            <Text style={styles.modalTitle}>
-              Veículo Adicionado
-            </Text>
+        selected &&
+          styles.selectedCard,
+      ]}
+      activeOpacity={0.9}
+      onPress={() =>
+        router.push({
+          pathname: "/vehicle/[id]",
 
-            <Text style={styles.modalText}>
-              {vehicle.model} foi
-              adicionado ao
-              comparativo.
-            </Text>
-          </View>
-        </View>
-      </Modal>
-
+          params: {
+            id: vehicle.id,
+          },
+        } as any)
+      }
+    >
+      {/* FAVORITO */}
       <TouchableOpacity
-        style={[
-          styles.card,
-
-          selected &&
-            styles.selectedCard,
-        ]}
-        activeOpacity={0.9}
-        onPress={() =>
-          router.push({
-            pathname: "/vehicle/[id]",
-
-            params: {
-              id: vehicle.id,
-            },
-          } as any)
-        }
+        style={styles.favoriteButton}
+        onPress={() => {
+          toggleFavorite(vehicle);
+        }}
       >
-        {/* FAVORITO */}
-        <TouchableOpacity
-          style={styles.favoriteButton}
-          onPress={() => {
-            toggleFavorite(vehicle);
-          }}
-        >
-          <Ionicons
-            name={
-              isFavorite
-                ? "heart"
-                : "heart-outline"
-            }
-            size={26}
-            color="#FF4D6D"
-          />
-        </TouchableOpacity>
+        <Ionicons
+          name={
+            isFavorite
+              ? "heart"
+              : "heart-outline"
+          }
+          size={26}
+          color="#FF4D6D"
+        />
+      </TouchableOpacity>
 
-        {/* BADGE */}
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>
-            PREMIUM
+      {/* BADGE */}
+      <View style={styles.badge}>
+        <Text style={styles.badgeText}>
+          PREMIUM
+        </Text>
+      </View>
+
+      {/* IMAGE */}
+      <Image
+        source={
+          VEHICLE_IMAGES[
+            vehicle.image as keyof typeof VEHICLE_IMAGES
+          ]
+        }
+        style={styles.image}
+        resizeMode="contain"
+      />
+
+      {/* BRAND */}
+      <Text style={styles.brand}>
+        {vehicle.brand}
+      </Text>
+
+      {/* MODEL */}
+      <Text style={styles.model}>
+        {vehicle.model}{" "}
+        {vehicle.version}
+      </Text>
+
+      {/* PRICE */}
+      <Text style={styles.price}>
+        {formatCurrency(vehicle.price)}
+      </Text>
+
+      {/* SPECS */}
+      <View style={styles.specs}>
+        <View style={styles.specCard}>
+          <Text style={styles.specLabel}>
+            Motor
+          </Text>
+
+          <Text style={styles.specValue}>
+            {vehicle.engine}
           </Text>
         </View>
 
-        {/* IMAGE */}
-        <Image
-          source={
-            VEHICLE_IMAGES[
-              vehicle.image as keyof typeof VEHICLE_IMAGES
-            ]
-          }
-          style={styles.image}
-          resizeMode="contain"
-        />
+        <View style={styles.specCard}>
+          <Text style={styles.specLabel}>
+            Potência
+          </Text>
 
-        {/* BRAND */}
-        <Text style={styles.brand}>
-          {vehicle.brand}
-        </Text>
-
-        {/* MODEL */}
-        <Text style={styles.model}>
-          {vehicle.model}{" "}
-          {vehicle.version}
-        </Text>
-
-        {/* PRICE */}
-        <Text style={styles.price}>
-          {formatCurrency(vehicle.price)}
-        </Text>
-
-        {/* SPECS */}
-        <View style={styles.specs}>
-          <View style={styles.specCard}>
-            <Text style={styles.specLabel}>
-              Motor
-            </Text>
-
-            <Text style={styles.specValue}>
-              {vehicle.engine}
-            </Text>
-          </View>
-
-          <View style={styles.specCard}>
-            <Text style={styles.specLabel}>
-              Potência
-            </Text>
-
-            <Text style={styles.specValue}>
-              {vehicle.power}
-            </Text>
-          </View>
-
-          <View style={styles.specCard}>
-            <Text style={styles.specLabel}>
-              Tração
-            </Text>
-
-            <Text style={styles.specValue}>
-              {vehicle.traction}
-            </Text>
-          </View>
+          <Text style={styles.specValue}>
+            {vehicle.power}
+          </Text>
         </View>
 
-        {/* BOTÃO */}
-        <TouchableOpacity
-          style={[
-            styles.compareButton,
+        <View style={styles.specCard}>
+          <Text style={styles.specLabel}>
+            Tração
+          </Text>
 
-            selected &&
-              styles.compareButtonSelected,
-          ]}
-          onPress={handleCompare}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator
-              color="#fff"
-            />
-          ) : (
-            <Text
-              style={
-                styles.compareButtonText
-              }
-            >
-              {selected
-                ? "Selecionado"
-                : "Comparar Veículo"}
-            </Text>
-          )}
-        </TouchableOpacity>
+          <Text style={styles.specValue}>
+            {vehicle.traction}
+          </Text>
+        </View>
+      </View>
+
+      {/* BOTÃO */}
+      <TouchableOpacity
+        style={[
+          styles.compareButton,
+
+          selected &&
+            styles.compareButtonSelected,
+        ]}
+        onPress={handleCompare}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator
+            color="#fff"
+          />
+        ) : (
+          <Text
+            style={
+              styles.compareButtonText
+            }
+          >
+            {selected
+              ? "Selecionado"
+              : "Comparar Veículo"}
+          </Text>
+        )}
       </TouchableOpacity>
-    </>
+    </TouchableOpacity>
   );
 }
 
@@ -379,55 +340,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
 
     fontSize: 15,
-  },
-
-  modalOverlay: {
-    flex: 1,
-
-    backgroundColor:
-      "rgba(0,0,0,0.6)",
-
-    justifyContent: "center",
-
-    alignItems: "center",
-  },
-
-  modalBox: {
-    backgroundColor: "#071426",
-
-    width: "80%",
-
-    borderRadius: 28,
-
-    padding: 30,
-
-    alignItems: "center",
-
-    borderWidth: 1,
-
-    borderColor:
-      THEME.colors.primary,
-  },
-
-  modalTitle: {
-    color: "#fff",
-
-    fontSize: 24,
-
-    fontWeight: "bold",
-
-    marginTop: 18,
-
-    marginBottom: 10,
-  },
-
-  modalText: {
-    color: "#CBD5E1",
-
-    fontSize: 16,
-
-    textAlign: "center",
-
-    lineHeight: 24,
   },
 });

@@ -7,6 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Modal,
+  ActivityIndicator,
 } from "react-native";
 
 import { useMemo, useState } from "react";
@@ -28,6 +29,9 @@ export default function Compare() {
     useState("");
 
   const [modalVisible, setModalVisible] =
+    useState(false);
+
+  const [loadingCompare, setLoadingCompare] =
     useState(false);
 
   const {
@@ -107,11 +111,21 @@ export default function Compare() {
     },
   ];
 
-  function openCompareModal() {
+  async function handleSelectVehicle(
+    vehicle: any
+  ) {
+    addVehicle(vehicle);
+
     if (
-      selectedVehicles.length === 2
+      selectedVehicles.length === 1
     ) {
-      setModalVisible(true);
+      setLoadingCompare(true);
+
+      setTimeout(() => {
+        setLoadingCompare(false);
+
+        setModalVisible(true);
+      }, 1500);
     }
   }
 
@@ -128,7 +142,33 @@ export default function Compare() {
     const vehicle2 =
       selectedVehicles[1];
 
-    return `${vehicle1.model} apresenta perfil mais premium e esportivo, enquanto ${vehicle2.model} oferece melhor eficiência operacional e custo-benefício competitivo.`;
+    const priceWinner =
+      vehicle1.price <
+      vehicle2.price
+        ? vehicle1.model
+        : vehicle2.model;
+
+    const powerWinner =
+      parseInt(vehicle1.power) >
+      parseInt(vehicle2.power)
+        ? vehicle1.model
+        : vehicle2.model;
+
+    const consumptionWinner =
+      parseInt(vehicle1.consumption) >
+      parseInt(vehicle2.consumption)
+        ? vehicle1.model
+        : vehicle2.model;
+
+    return `
+${powerWinner} apresenta maior potência e perfil mais esportivo.
+
+${priceWinner} oferece melhor custo-benefício competitivo.
+
+${consumptionWinner} demonstra maior eficiência operacional considerando consumo energético.
+
+A análise comparativa permite identificar vantagens estratégicas entre os veículos para diferentes cenários automotivos.
+`;
   }
 
   return (
@@ -213,27 +253,6 @@ export default function Compare() {
           style={styles.searchInput}
         />
 
-        {/* BOTÃO */}
-        {selectedVehicles.length ===
-          2 && (
-          <TouchableOpacity
-            style={
-              styles.openCompareButton
-            }
-            onPress={
-              openCompareModal
-            }
-          >
-            <Text
-              style={
-                styles.openCompareText
-              }
-            >
-              Abrir Comparativo
-            </Text>
-          </TouchableOpacity>
-        )}
-
         {/* EMPTY */}
         {selectedVehicles.length <
           2 && (
@@ -242,8 +261,8 @@ export default function Compare() {
               style={styles.emptyText}
             >
               Selecione 2 veículos
-              para iniciar o
-              comparativo.
+              para iniciar a análise
+              inteligente.
             </Text>
           </View>
         )}
@@ -264,7 +283,9 @@ export default function Compare() {
                   item.id
               )}
               onPress={() =>
-                addVehicle(item)
+                handleSelectVehicle(
+                  item
+                )
               }
             />
           )}
@@ -272,6 +293,41 @@ export default function Compare() {
       </ScrollView>
 
       <BottomNav />
+
+      {/* LOADING IA */}
+      <Modal
+        visible={loadingCompare}
+        transparent
+        animationType="fade"
+      >
+        <View
+          style={styles.loadingOverlay}
+        >
+          <View
+            style={styles.loadingBox}
+          >
+            <ActivityIndicator
+              size="large"
+              color={
+                THEME.colors.primary
+              }
+            />
+
+            <Text
+              style={styles.loadingTitle}
+            >
+              Analisando veículos...
+            </Text>
+
+            <Text
+              style={styles.loadingText}
+            >
+              Gerando insights
+              competitivos com IA
+            </Text>
+          </View>
+        </View>
+      </Modal>
 
       {/* MODAL */}
       <Modal
@@ -415,7 +471,7 @@ export default function Compare() {
                 styles.analysisTitle
               }
             >
-              Análise IA
+              Análise Inteligente
             </Text>
 
             <Text
@@ -525,21 +581,6 @@ const styles = StyleSheet.create({
     borderColor: "#132238",
   },
 
-  openCompareButton: {
-    backgroundColor:
-      THEME.colors.primary,
-    padding: 18,
-    borderRadius: 18,
-    marginBottom: 28,
-    alignItems: "center",
-  },
-
-  openCompareText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-
   emptyBox: {
     backgroundColor: "#071426",
     borderRadius: 20,
@@ -553,6 +594,39 @@ const styles = StyleSheet.create({
   emptyText: {
     color: "#94A3B8",
     textAlign: "center",
+  },
+
+  loadingOverlay: {
+    flex: 1,
+    backgroundColor:
+      "rgba(0,0,0,0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  loadingBox: {
+    backgroundColor: "#071426",
+    padding: 40,
+    borderRadius: 24,
+    alignItems: "center",
+    width: 300,
+    borderWidth: 1,
+    borderColor:
+      THEME.colors.primary,
+  },
+
+  loadingTitle: {
+    color: "#fff",
+    fontSize: 22,
+    fontWeight: "bold",
+    marginTop: 24,
+  },
+
+  loadingText: {
+    color: "#94A3B8",
+    marginTop: 10,
+    textAlign: "center",
+    lineHeight: 24,
   },
 
   modalContainer: {
